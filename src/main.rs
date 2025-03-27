@@ -1,28 +1,45 @@
 mod instruction;
 mod parse_file;
 mod types;
-use std::collections::HashMap;
+use std::{
+    collections::HashMap,
+    env::{self, args},
+    fs,
+};
 
-use instruction::{Address, Op, Reg};
+use instruction::Op;
+use parse_file::Line;
+use types::{Address, Reg};
 
 fn main() {
-    use Op::*;
-    let name = "IO_test_INC";
-    let instructions: Vec<Op> = vec![
-        //
-        MOVIN(Reg(0)),
-        INC(Reg(0), Reg(0)),
-        MOVOUT(Reg(0)),
-        HALT,
-    ];
-    print!("{}", to_verilog(name, instructions))
+    // let name = "IO_test_INC";
+    // let instructions: Vec<Op> = vec![
+    //     //
+    //     MOVIN(Reg(0)),
+    //     INC(Reg(0), Reg(0)),
+    //     MOVOUT(Reg(0)),
+    //     HALT,
+    // ];
+
+    let mut args = env::args();
+    _ = args.next();
+    let file_name = args.next().expect("CLI ERR: no argument given for file");
+    let name = args.next().unwrap_or(file_name.clone());
+
+    let instructions: Vec<_> = fs::read_to_string(file_name)
+        .expect("CLI ERR: could not open file")
+        .lines()
+        .map(|line| Line::from_str(line).to_instruction())
+        .collect();
+
+    print!("{}", to_verilog(&name, instructions))
 }
 
 pub fn to_verilog(name: &str, instructions: Vec<Op>) -> String {
     if name.split_whitespace().count() != 1 {
         panic!("invalid name: {name:?}");
     }
-    let mut labels: HashMap<&str, Address> = HashMap::new();
+    let mut labels: HashMap<String, Address> = HashMap::new();
     let mut i = 0;
     let mut final_instructions = Vec::new();
     for instruction in instructions

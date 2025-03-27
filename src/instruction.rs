@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::types::{Address, FlagBitPos, PortBitPos, Reg, RegBitPos};
+use crate::types::{Address, BitPos, Reg};
 
 #[derive(Debug)]
 pub enum Op {
@@ -16,14 +16,14 @@ pub enum Op {
     CMP(Reg, Reg),
     RR(Reg, Reg),
     RL(Reg, Reg),
-    SETB(Reg, RegBitPos),
-    CLRB(Reg, RegBitPos),
-    CPLB(Reg, RegBitPos),
-    SETF(FlagBitPos),
-    CLRF(FlagBitPos),
-    CPLF(FlagBitPos),
-    LOADBR(&'static str),
-    JF(FlagBitPos),
+    SETB(Reg, BitPos),
+    CLRB(Reg, BitPos),
+    CPLB(Reg, BitPos),
+    SETF(BitPos),
+    CLRF(BitPos),
+    CPLF(BitPos),
+    LOADBR(String),
+    JF(BitPos),
     LOAD(Reg, Reg),
     STORE(Reg, Reg),
     LBL(Reg, u8),
@@ -31,15 +31,15 @@ pub enum Op {
     MOV(Reg, Reg),
     MOVOUT(Reg),
     MOVIN(Reg),
-    MOVB(PortBitPos),
+    MOVB(BitPos),
     HALT,
     // Psuedo Instructions
-    Label(&'static str),
+    Label(String),
     LoadByte(Reg, u8, u8),
 }
 
 impl Op {
-    pub fn to_verilog(&self, labels: &HashMap<&str, Address>) -> String {
+    pub fn to_verilog(&self, labels: &HashMap<String, Address>) -> String {
         let opcode = self.opcode();
         let mut result = format!("{{{opcode}, ");
         result += &match self {
