@@ -76,7 +76,7 @@ impl Line {
             if let Some((op, _)) = op.split_once(':') {
                 return Self::Label(op.into());
             } else {
-                panic!("ERR: [{line}], idk what this is but it's wrong")
+                panic!("ERR: [{line:?}], idk what this is but it's wrong")
             }
         }
 
@@ -125,6 +125,11 @@ impl Line {
                 }
             }
             "not" | "inc" | "rl" | "rr" => {
+                if op == "inc" {
+                    let op = OneArgOp::Inc;
+                    let reg = Reg::from_str(args[0]);
+                    return Self::MathOneArg(op, reg, reg);
+                }
                 if args.len() != 2 {
                     panic!("incorrect argument length for {}", op.to_uppercase());
                 }

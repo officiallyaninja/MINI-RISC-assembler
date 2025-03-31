@@ -12,15 +12,6 @@ use parse_file::Line;
 use types::{Address, Reg};
 
 fn main() {
-    // let name = "IO_test_INC";
-    // let instructions: Vec<Op> = vec![
-    //     //
-    //     MOVIN(Reg(0)),
-    //     INC(Reg(0), Reg(0)),
-    //     MOVOUT(Reg(0)),
-    //     HALT,
-    // ];
-
     let mut args = env::args();
     _ = args.next();
     let file_name = args.next().expect("CLI ERR: no argument given for file");
