@@ -76,14 +76,18 @@ impl Line {
             if let Some((op, _)) = op.split_once(':') {
                 return Self::Label(op.into());
             } else {
-                panic!("ERR: [{line:?}], idk what this is but it's wrong")
+                panic!("ERR: [{line:?}], args is empty but also is not HALT or a label")
             }
         }
 
         match op.as_ref() {
             "mov" => {
                 if args.len() != 2 {
-                    panic!("incorrect argument length for {}", op.to_uppercase());
+                    panic!(
+                        "instruction expected 2 arguments but received {} arguments: {}",
+                        args.len(),
+                        op.to_uppercase()
+                    );
                 }
                 let destination = {
                     let arg = args[0];
@@ -131,7 +135,11 @@ impl Line {
                     return Self::MathOneArg(op, reg, reg);
                 }
                 if args.len() != 2 {
-                    panic!("incorrect argument length for {}", op.to_uppercase());
+                    panic!(
+                        "instruction expected 2 arguments but received {} arguments: {}",
+                        args.len(),
+                        op.to_uppercase()
+                    );
                 }
                 let op = match op.as_ref() {
                     "not" => OneArgOp::Not,
@@ -144,7 +152,11 @@ impl Line {
             }
             "add" | "sub" | "and" | "or" | "xor" => {
                 if args.len() != 3 {
-                    panic!("incorrect argument length for {}", op.to_uppercase());
+                    panic!(
+                        "instruction expected 3 arguments but received {} arguments: {}",
+                        args.len(),
+                        op.to_uppercase()
+                    );
                 }
                 let op = match op.as_ref() {
                     "add" => TwoArgOp::Add,
@@ -163,7 +175,11 @@ impl Line {
             }
             "mul" | "div" | "cmp" => {
                 if args.len() != 2 {
-                    panic!("incorrect argument length for {}", op.to_uppercase());
+                    panic!(
+                        "instruction expected 2 arguments but received {} arguments: {}",
+                        args.len(),
+                        op.to_uppercase()
+                    );
                 }
                 let op = match op.as_ref() {
                     "mul" => NoOutTwoArgOp::Mul,
@@ -174,8 +190,12 @@ impl Line {
                 Self::MathNoOutTwoArg(op, Reg::from_str(args[0]), Reg::from_str(args[1]))
             }
             "set" | "clr" | "cpl" => {
-                if (args.len() != 1) {
-                    panic!("incorrect argument length for {}", op.to_uppercase());
+                if args.len() != 1 {
+                    panic!(
+                        "instruction expected 1 argument but received {} arguments: {}",
+                        args.len(),
+                        op.to_uppercase()
+                    );
                 }
                 let bit_op = match op.as_ref() {
                     "set" => BitOp::Set,
@@ -196,7 +216,11 @@ impl Line {
             }
             "movb" => {
                 if args.len() != 1 {
-                    panic!("incorrect argument length for {}", op.to_uppercase());
+                    panic!(
+                        "instruction expected 1 argument but received {} arguments: {}",
+                        args.len(),
+                        op.to_uppercase()
+                    );
                 }
 
                 let index = args[0]
@@ -209,18 +233,26 @@ impl Line {
             }
             "jf" => {
                 if args.len() != 1 {
-                    panic!("incorrect argument length for {}", op.to_uppercase());
+                    panic!(
+                        "instruction expected 1 argument but received {} arguments: {}",
+                        args.len(),
+                        op.to_uppercase()
+                    );
                 }
                 Self::JumpIf(BitPos::from_flag(&args[0]))
             }
             "loadbr" => {
                 if args.len() != 1 {
-                    panic!("incorrect argument length for {}", op.to_uppercase());
+                    panic!(
+                        "instruction expected 1 argument but received {} arguments: {}",
+                        args.len(),
+                        op.to_uppercase()
+                    );
                 }
                 Self::LoadBranch(args[0].into())
             }
             _ => {
-                panic!("ERR: [{line}], invalid operator")
+                panic!("ERR: [{line}], invalid operator {op}")
             }
         }
     }

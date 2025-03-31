@@ -20,6 +20,7 @@ fn main() {
     let instructions: Vec<_> = fs::read_to_string(file_name)
         .expect("CLI ERR: could not open file")
         .lines()
+        .filter(|line| !line.trim().is_empty())
         .map(|line| Line::from_str(line).to_instruction())
         .collect();
 
